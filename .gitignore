@@ -1,1 +1,6 @@
 .vscode/
+
+Project/Keil/Listings
+Project/Keil/Objects
+*.uvgui.*
+*.uvopt
