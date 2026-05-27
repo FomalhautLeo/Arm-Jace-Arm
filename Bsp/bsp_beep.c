@@ -33,7 +33,7 @@ void bsp_beep_toggle(void) {
 }
 
 // 蜂鸣器持续响 ms count 次
-void bsp_beep(uint32_t ms, uint32_t count) {
+void bsp_beep(uint16_t ms, uint16_t count) {
     while (count--) {
         bsp_beep_on();
         bsp_delay_ms(ms);
