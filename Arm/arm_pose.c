@@ -5,12 +5,12 @@
 #include "user_utils.h"
 
 static const arm_joint_limit_t joint_limits[SERVO_COUNT] = {
-    {SERVO_POS_MIN, SERVO_POS_MAX, SERVO_POS_MID},
-    {SERVO_POS_MIN, SERVO_POS_MAX, SERVO_POS_MID},
-    {SERVO_POS_MIN, SERVO_POS_MAX, SERVO_POS_MID},
-    {SERVO_POS_MIN, SERVO_POS_MAX, SERVO_POS_MID},
-    {SERVO_POS_MIN, SERVO_POS_MAX, SERVO_POS_MID},
-    {SERVO_POS_MIN, SERVO_POS_MAX, SERVO_POS_MID},
+    {550, 2450, 1500},  // joint0 底座
+    {750, 2150, 1500},  // joint1 大臂
+    {900, 2250, 1500},  // joint2 小臂
+    {800, 2150, 1500},  // joint3 腕部折叠
+    {550, 2450, 1500},  // joint4 腕部旋转
+    {1100, 1690, 1500},  // joint5 夹爪
 };
 
 void arm_set_pose(const arm_pose_t* pose, uint16_t time) {
