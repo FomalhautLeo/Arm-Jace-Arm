@@ -1,13 +1,11 @@
 #include <stdlib.h>
 
-#include "arm_pose.h"
+#include "arm_action.h"
 #include "bsp_beep.h"
 #include "bsp_rcc.h"
 #include "bsp_systick.h"
 #include "bsp_uart.h"
 #include "user_def.h"
-
-#define BUS_SERVO_DEBUG
 
 int main(void) {
     // 时钟初始化
@@ -26,13 +24,29 @@ int main(void) {
     bsp_beep(200, 3);
     // 调试信息
     bsp_uart1_send_string("Hello STM!\r\n");
-    // 动作1
+    // 动作组
     bsp_uart1_send_string("Move 1!\r\n");
-    arm_frame_t frame = {
-        .pose = {.joint = {1600, 1600, 1600, 1600, 1600, 1600}},
-        .time = 1000,
+    const arm_frame_t frames[] = {
+        {
+            .pose = {.joint = {1400, 1400, 1400, 1400, 1400, 1400}},
+            .time = 1000,
+        },
+        {
+            .pose = {.joint = {1600, 1600, 1600, 1600, 1600, 1600}},
+            .time = 1000,
+        },
+        {
+            .pose = {.joint = {1400, 1400, 1400, 1400, 1400, 1400}},
+            .time = 1000,
+        },
     };
-    arm_play_frame(&frame);
+
+    arm_action_t action = {
+        .frames = frames,
+        .frame_count = 3,
+    };
+    // 执行动作组
+    arm_play_action(&action);
     bsp_delay_ms(2000);
     // 回正
     bsp_uart1_send_string("Move 2!\r\n");
