@@ -32,6 +32,17 @@ void bsp_uart1_init(uint32_t baudrate) {
     usart_init.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;  // 收发模式
     USART_Init(USART1, &usart_init);
 
+    // 中断配置
+    NVIC_InitTypeDef nvic_init;
+    nvic_init.NVIC_IRQChannel = USART1_IRQn;
+    nvic_init.NVIC_IRQChannelPreemptionPriority = 1;  // 抢占优先级
+    nvic_init.NVIC_IRQChannelSubPriority = 1;             // 子优先级
+    nvic_init.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic_init);
+
+    // 开启 USART1 接收非空中断
+    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+
     // 使能
     USART_Cmd(USART1, ENABLE);
 }
