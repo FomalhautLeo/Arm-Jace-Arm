@@ -5,6 +5,7 @@
 
 #define SERVO_COUNT 6  // 一共6个舵机
 
+// 缓冲区长度
 #define SERVO_CMD_LENGTH 32
 #define SERVO_GROUP_CMD_LENGTH 128
 
@@ -16,6 +17,9 @@
 #define SERVO_POS_MAX 2500
 #define SERVO_TIME_MIN 500
 #define SERVO_TIME_MAX 9999
+
+// 中间位置
+#define SERVO_POS_MID 1500
 
 typedef struct {
     uint8_t id;
