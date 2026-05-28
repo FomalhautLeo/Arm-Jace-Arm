@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "user_debug.h"
 #include "user_def.h"
 
 static uart_frame_t frame_arr[UART_FRAME_COUNT];

@@ -50,6 +50,7 @@ int main(void) {
         // 接收串口调试数据
         if (uart_frame_is_ready(UART_FRAME_USER)) {
             uart_frame_get(UART_FRAME_USER, cmd, sizeof(cmd));
+            debug_println(cmd);
             command_parser_handle(cmd);
         }
         // 接收舵机回发数据
