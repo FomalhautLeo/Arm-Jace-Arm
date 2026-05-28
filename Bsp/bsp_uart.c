@@ -36,7 +36,7 @@ void bsp_uart1_init(uint32_t baudrate) {
     NVIC_InitTypeDef nvic_init;
     nvic_init.NVIC_IRQChannel = USART1_IRQn;
     nvic_init.NVIC_IRQChannelPreemptionPriority = 1;  // 抢占优先级
-    nvic_init.NVIC_IRQChannelSubPriority = 1;             // 子优先级
+    nvic_init.NVIC_IRQChannelSubPriority = 1;         // 子优先级
     nvic_init.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic_init);
 
@@ -78,6 +78,17 @@ void bsp_uart3_init(uint32_t baudrate) {
     usart_init.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;  // 收发模式
     USART_Init(USART3, &usart_init);
 
+    // 中断配置
+    NVIC_InitTypeDef nvic_init;
+    nvic_init.NVIC_IRQChannel = USART3_IRQn;
+    nvic_init.NVIC_IRQChannelPreemptionPriority = 1;  // 抢占优先级
+    nvic_init.NVIC_IRQChannelSubPriority = 2;         // 子优先级
+    nvic_init.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvic_init);
+
+    // 开启 USART1 接收非空中断
+    USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
+
     // 使能
     USART_Cmd(USART3, ENABLE);
 }
@@ -97,6 +108,10 @@ void bsp_uart_send_string(USART_TypeDef* usart_x, const char* str) {
         str++;
     }
 }
+
+void bsp_uart1_send_byte(uint8_t data) { bsp_uart_send_byte(USART1, data); }
+
+void bsp_uart3_send_byte(uint8_t data) { bsp_uart_send_byte(USART3, data); }
 
 void bsp_uart1_send_string(const char* str) {
     bsp_uart_send_string(USART1, str);

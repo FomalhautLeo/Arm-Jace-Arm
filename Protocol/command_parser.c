@@ -17,7 +17,7 @@ static uint8_t parse_num(const char* str, uint16_t length, char end,
 
 void command_parser_handle(const char* cmd) {
     if (cmd == NULL) return;
-    debug_print("Parsing command: ");
+    debug_print("[Parser] Parsing command: ");
     debug_println(cmd);
     if (cmd[0] == '#') {
         // 裸命令透传
