@@ -2,15 +2,17 @@
 
 #include <string.h>
 
+#include "user_def.h"
+
 static volatile uint8_t frame_ready = 0;  // 标记是否就绪
 static volatile uint8_t receiving = 0;    // 标记是否正在解析
-static char rx_buf[128];                  // 命令缓冲区
+static char rx_buf[UART_COMMAND_BUFFER_LENGTH];   // 命令缓冲区
 static volatile uint16_t rx_index = 0;    // 命令缓冲区下标
 
 void uart_command_on_byte(uint8_t data) {
     // 旧数据还没处理
     if (frame_ready) return;
-    if ((char)data == '#') {
+    if ((char)data == '#' || (char)data == '$') {
         // 获取到新数据，开始解析
         receiving = 1;
         rx_index = 0;
