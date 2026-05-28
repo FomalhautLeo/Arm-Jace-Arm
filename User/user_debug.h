@@ -3,5 +3,7 @@
 
 void debug_print(const char* str);
 void debug_println(const char* str);
+void debug_ok(const char* str);
+void debug_err(const char* str);
 
 #endif

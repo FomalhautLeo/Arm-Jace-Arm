@@ -3,13 +3,29 @@
 #include "bsp_uart.h"
 
 void debug_print(const char* str) {
-#ifdef BUS_SERVO_DEBUG
+#ifdef DEBUG
     bsp_uart1_send_string(str);
 #endif
 }
 
 void debug_println(const char* str) {
-#ifdef BUS_SERVO_DEBUG
+#ifdef DEBUG
+    bsp_uart1_send_string(str);
+    bsp_uart1_send_string("\r\n");
+#endif
+}
+
+void debug_ok(const char* str) {
+#ifdef DEBUG
+    bsp_uart1_send_string("[OK] ");
+    bsp_uart1_send_string(str);
+    bsp_uart1_send_string("\r\n");
+#endif
+}
+
+void debug_err(const char* str) {
+#ifdef DEBUG
+    bsp_uart1_send_string("[ERR] ");
     bsp_uart1_send_string(str);
     bsp_uart1_send_string("\r\n");
 #endif

@@ -4,16 +4,12 @@
 #include <string.h>
 
 #include "bsp_uart.h"
+#include "user_debug.h"
 #include "user_utils.h"
 
 static void bus_servo_send_cmd(const char* cmd) {
     bsp_uart3_send_string(cmd);
-
-#ifdef BUS_SERVO_DEBUG
-    bsp_uart1_send_string("[SERVO] ");
-    bsp_uart1_send_string(cmd);
-    bsp_uart1_send_string("\r\n");
-#endif
+    debug_println(cmd);
 }
 
 void bus_servo_move(uint8_t id, uint16_t pos, uint16_t time) {
