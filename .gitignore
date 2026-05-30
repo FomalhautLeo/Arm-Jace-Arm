@@ -1,4 +1,5 @@
 .vscode/
+__pycache__
 
 Project/Keil/Listings
 Project/Keil/Objects
