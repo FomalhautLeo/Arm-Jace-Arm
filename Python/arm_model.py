@@ -11,9 +11,6 @@ class ArmLinks:
     l1: 大臂长度，joint1 -> joint2
     l2: 小臂长度，joint2 -> joint3
     l3: 腕部/夹爪末端长度，joint3 -> 夹爪末端中心
-
-    当前数值来自手动测量，精度不需要很高。
-    这一版主要用于验证运动学方向和几何关系。
     """
 
     l0: float = 100
@@ -222,16 +219,26 @@ def inverse_kinematics_2d(
     return rad2deg(theta1), rad2deg(theta2), rad2deg(theta3)
 
 
-def cost(theta1: float, theta2: float, theta3: float) -> float:
-    """
-    惩罚值
-    """
-    # return theta1**2 + theta2**2 + theta3**2
+def cost(
+    theta1: float,
+    theta2: float,
+    theta3: float,
+    prev_theta: tuple[float, float, float] | None = None,
+) -> float:
     base = theta1**2 + theta2**2 + theta3**2
+
+    CONTINUITY_WEIGHT = 20.0
 
     # 不鼓励大臂后仰
     if theta1 < 0:
         base += 9.0 * theta1**2
+
+    # 轨迹连续性：不鼓励和上一帧差太多
+    if prev_theta is not None:
+        p1, p2, p3 = prev_theta
+        base += CONTINUITY_WEIGHT * (
+            (theta1 - p1) ** 2 + (theta2 - p2) ** 2 + (theta3 - p3) ** 2
+        )
 
     return base
 
@@ -247,7 +254,11 @@ def is_valid_theta(theta1: float, theta2: float, theta3: float) -> bool:
 
 
 def solve_ik_by_alpha_search(
-    x: float, z: float, alpha_min: int = -80, alpha_max: int = 80
+    x: float,
+    z: float,
+    alpha_min: int = -80,
+    alpha_max: int = 80,
+    prev_theta: tuple[float, float, float] | None = None,
 ) -> tuple[float, float, float]:
     """搜索 alpha 寻找相对优解"""
     min_cost = 1e9
@@ -262,7 +273,7 @@ def solve_ik_by_alpha_search(
                 continue
             if not is_valid_theta(theta1, theta2, theta3):
                 continue
-            cur_cost = cost(theta1, theta2, theta3)
+            cur_cost = cost(theta1, theta2, theta3, prev_theta)
             if cur_cost < min_cost:
                 # 记录最小惩罚值
                 min_cost = cur_cost
