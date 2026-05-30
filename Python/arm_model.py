@@ -219,26 +219,44 @@ def inverse_kinematics_2d(
     return rad2deg(theta1), rad2deg(theta2), rad2deg(theta3)
 
 
+# def cost(
+#     theta1: float,
+#     theta2: float,
+#     theta3: float,
+#     prev_theta: tuple[float, float, float] | None = None,
+# ) -> float:
+#     base = theta1**2 + theta2**2 + theta3**2
+
+#     CONTINUITY_WEIGHT = 20.0
+
+#     # 不鼓励大臂后仰
+#     if theta1 < 0:
+#         base += 9.0 * theta1**2
+
+#     # 轨迹连续性：不鼓励和上一帧差太多
+#     if prev_theta is not None:
+#         p1, p2, p3 = prev_theta
+#         base += CONTINUITY_WEIGHT * (
+#             (theta1 - p1) ** 2 + (theta2 - p2) ** 2 + (theta3 - p3) ** 2
+#         )
+
+
+#     return base
 def cost(
     theta1: float,
     theta2: float,
     theta3: float,
     prev_theta: tuple[float, float, float] | None = None,
 ) -> float:
-    base = theta1**2 + theta2**2 + theta3**2
+    alpha = theta1 + theta2 + theta3
 
-    CONTINUITY_WEIGHT = 20.0
+    alpha_target = 20.0
 
-    # 不鼓励大臂后仰
-    if theta1 < 0:
-        base += 9.0 * theta1**2
+    base = theta1**2 + theta2**2 + theta3**2 + 5.0 * (alpha - alpha_target) ** 2
 
-    # 轨迹连续性：不鼓励和上一帧差太多
     if prev_theta is not None:
         p1, p2, p3 = prev_theta
-        base += CONTINUITY_WEIGHT * (
-            (theta1 - p1) ** 2 + (theta2 - p2) ** 2 + (theta3 - p3) ** 2
-        )
+        base += 10.0 * ((theta1 - p1) ** 2 + (theta2 - p2) ** 2 + (theta3 - p3) ** 2)
 
     return base
 
@@ -251,6 +269,17 @@ def is_valid_theta(theta1: float, theta2: float, theta3: float) -> bool:
         and -80 <= theta3 <= 80
         and -60 <= alpha <= 60
     )
+
+
+def is_valid_transition(
+    theta: tuple[float, float, float],
+    prev_theta: tuple[float, float, float] | None,
+    max_delta: float = 35.0,
+) -> bool:
+    if prev_theta is None:
+        return True
+
+    return all(abs(a - b) <= max_delta for a, b in zip(theta, prev_theta))
 
 
 def solve_ik_by_alpha_search(
@@ -272,6 +301,8 @@ def solve_ik_by_alpha_search(
                 # 无解，直接忽略
                 continue
             if not is_valid_theta(theta1, theta2, theta3):
+                continue
+            if not is_valid_transition((theta1, theta2, theta3), prev_theta):
                 continue
             cur_cost = cost(theta1, theta2, theta3, prev_theta)
             if cur_cost < min_cost:
